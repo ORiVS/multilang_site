@@ -21,8 +21,11 @@ from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('chatbot/', views.chatbot, name='chatbot'),
 ]
 
 urlpatterns += i18n_patterns(
     path('', views.article_list, name='article_list'),
 )
+
+
