@@ -2,17 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Articles</title>
+    <title>Chatbot</title>
 </head>
 <body>
-<h1>Articles</h1>
-<ul>
-    {% for article in articles %}
-    <li>{{ article.title }} - {{ article.publication_date }}</li>
-    {% endfor %}
-</ul>
-<a href="/en/">English</a> | <a href="/fr/">Français</a>
-<br>
-<a href="/chatbot/">Chat with our bot</a>
+<h1>Chatbot</h1>
+<div id="chat-box"></div>
+<input type="text" id="message">
+<button onclick="sendMessage()">Send</button>
+
+<script>
+    function sendMessage() {
+        const message = document.getElementById('message').value;
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        fetch('/chatbot/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: `message=${encodeURIComponent(message)}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                const chatBox = document.getElementById('chat-box');
+                const userMessage = document.createElement('p');
+                userMessage.textContent = `You: ${message}`;
+                chatBox.appendChild(userMessage);
+
+                const botMessage = document.createElement('p');
+                botMessage.textContent = `Bot: ${data.message}`;
+                chatBox.appendChild(botMessage);
+
+                document.getElementById('message').value = '';
+            });
+    }
+</script>
 </body>
 </html>
